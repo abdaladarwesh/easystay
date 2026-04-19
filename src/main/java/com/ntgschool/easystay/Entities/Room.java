@@ -22,7 +22,7 @@ public class Room {
     private Long capacity;
 
     @Column(nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
