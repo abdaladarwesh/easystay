@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: easystay
+  datasource:
+    url: jdbc:oracle:thin:@//localhost:1521/orcl
+    username: c##abdullah
+    password: password123
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: update
+#      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: yNcWGArQWpoh4lHACl/cbhnWdgCv9ML92Rq+SMnl3zc=
+  expiry: 8640000
