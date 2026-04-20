@@ -17,4 +17,6 @@ public class HotelResponse {
     private String name;
     private Location location;
     private List<RoomResponse> rooms;
+    private List<String> images;
+    private String mainImage;
 }

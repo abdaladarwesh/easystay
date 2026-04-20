@@ -3,7 +3,10 @@ package com.ntgschool.easystay.Controllers;
 
 import com.ntgschool.easystay.Dtos.Request.AuthenticationRequest;
 import com.ntgschool.easystay.Dtos.Request.CreateAccountRequest;
+import com.ntgschool.easystay.Dtos.Request.UpdateProfileRequest;
 import com.ntgschool.easystay.Dtos.Response.AuthenticationResponse;
+import com.ntgschool.easystay.Dtos.Response.UserResponse;
+import com.ntgschool.easystay.Entities.User;
 import com.ntgschool.easystay.Mappers.UserMapper;
 import com.ntgschool.easystay.Services.AuthenticationService;
 import jakarta.validation.Valid;
@@ -55,6 +58,12 @@ public class AuthController {
                         .expiresAt(expiresAt)
                         .build()
         );
+    }
+
+    @PutMapping("profile")
+    public ResponseEntity<UserResponse> updateProfile(@RequestBody UpdateProfileRequest request) {
+        User user = authenticationService.updateProfile(request);
+        return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 
 }

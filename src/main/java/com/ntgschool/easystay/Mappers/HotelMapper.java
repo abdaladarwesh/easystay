@@ -14,6 +14,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {RoomMapper.class})
 public interface HotelMapper {
     @Mapping(target = "rooms",source = "rooms", qualifiedByName = "getRooms")
+    @Mapping(target = "mainImage", source = "mainImage")
+    @Mapping(target = "images", source = "images")
     HotelResponse toHotelResponse(Hotel hotel);
 
     @Named("getRooms")

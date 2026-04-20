@@ -1,5 +1,6 @@
 package com.ntgschool.easystay.Services.impl;
 
+import com.ntgschool.easystay.Dtos.Request.UpdateProfileRequest;
 import com.ntgschool.easystay.Entities.Location;
 import com.ntgschool.easystay.Entities.User;
 import com.ntgschool.easystay.Exceptions.UserAlreadyExistsException;
@@ -13,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -93,5 +96,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public UserDetails validateToken(String token) {
         String email = getSubject(token);
         return userPrincipalService.loadUserByUsername(email);
+    }
+
+    @Override
+    public User updateProfile(UpdateProfileRequest request) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // overwrite مباشرة (PUT semantics)
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setLocation(request.getLocation());
+
+        userRepository.save(user);
+
+        return user;
     }
 }
