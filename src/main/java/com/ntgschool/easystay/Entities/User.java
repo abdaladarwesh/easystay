@@ -31,13 +31,17 @@ public class User {
     private String password;
 
     @Embedded
-    private Location location;
+    private UserLocation location;
 
     @Column(nullable = false)
     private String phoneNumber;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservations = new ArrayList<>();

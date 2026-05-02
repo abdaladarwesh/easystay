@@ -1,8 +1,10 @@
 package com.ntgschool.easystay.Services;
 
+import com.ntgschool.easystay.Entities.Facility;
 import com.ntgschool.easystay.Entities.Room;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RoomService {
     List<Room> getAllRooms();

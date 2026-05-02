@@ -2,7 +2,9 @@ package com.ntgschool.easystay.Services.impl;
 
 import com.ntgschool.easystay.Dtos.Request.UpdateProfileRequest;
 import com.ntgschool.easystay.Entities.Location;
+import com.ntgschool.easystay.Entities.Role;
 import com.ntgschool.easystay.Entities.User;
+import com.ntgschool.easystay.Entities.UserLocation;
 import com.ntgschool.easystay.Exceptions.UserAlreadyExistsException;
 import com.ntgschool.easystay.Repos.UserRepository;
 import com.ntgschool.easystay.Security.UserPrincipal;
@@ -21,10 +23,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static com.ntgschool.easystay.Entities.Role.USER;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private Long jwtExpiryMs;
 
     @Override
-    public UserDetails createUser(String email, String password, String name, String phoneNumber, Location location) {
+    public UserDetails createUser(String email, String password, String name, String phoneNumber, UserLocation location) {
         if (userRepository.findByEmail(email).isPresent()){
             throw new UserAlreadyExistsException(email) ;
         }
@@ -52,6 +53,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .name(name)
                 .phoneNumber(phoneNumber)
                 .location(location)
+                .role(USER)
+                .build();
+        userRepository.save(user);
+
+        return new UserPrincipal(user);
+    }
+
+    @Override
+    public UserDetails createAdminUser(String email, String password, String name, String phoneNumber, UserLocation location) {
+        if (userRepository.findByEmail(email).isPresent()){
+            throw new UserAlreadyExistsException(email) ;
+        }
+        User user = User.builder()
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .name(name)
+                .phoneNumber(phoneNumber)
+                .location(location)
+                .role(Role.ADMIN)
                 .build();
         userRepository.save(user);
 
@@ -105,7 +125,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // overwrite مباشرة (PUT semantics)
+
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
@@ -114,5 +134,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(user);
 
         return user;
+    }
+
+    @Override
+    public User getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public void deleteUser(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(
+            () -> new UsernameNotFoundException("User with id " + id + " is not found")
+        );
+        userRepository.delete(user);
     }
 }

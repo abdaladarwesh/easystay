@@ -18,11 +18,29 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private String name;
+
     @Column(nullable = false)
     private Long capacity;
 
+    @Column
+    private Integer capacityChildren;
+
+    @Column
+    private String bedType;
+
+    @Column
+    private Integer sizeM2;
+
     @Column(nullable = false)
     private BigDecimal price;
+
+    @Column
+    private Boolean refundable;
+
+    @Column
+    private Boolean breakfastIncluded;
 
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)

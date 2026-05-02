@@ -27,22 +27,28 @@ public class SecurityConfig {
         return new AuthenticationFilter(authenticationService);
     }
 
-
-
-
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationFilter filter){
         http.authorizeHttpRequests(
                         auth ->
                                 auth
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
+                                        .requestMatchers(HttpMethod.DELETE,"/api/v1/hotels/**").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                                         .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
                                         .requestMatchers(HttpMethod.GET,"/api/v1/hotels/**").permitAll()
-                                        .requestMatchers(HttpMethod.POST,"/api/v1/hotels/**").permitAll()
+                                        .requestMatchers(HttpMethod.POST,"/api/v1/hotels/**").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.PUT,"/api/v1/hotels/**").hasRole("ADMIN")
                                         .requestMatchers(HttpMethod.GET,"/api/v1/facilities/**").permitAll()
-                                        .requestMatchers(HttpMethod.POST,"/api/v1/facilities/**").permitAll()
+                                        .requestMatchers(HttpMethod.POST,"/api/v1/facilities/**").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.PUT,"/api/v1/facilities/**").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.DELETE,"/api/v1/facilities/**").hasRole("ADMIN")
                                         .requestMatchers(HttpMethod.GET,"/api/v1/rooms/**").permitAll()
-//                                        .requestMatchers(HttpMethod.POST,"/api/v1/rooms/**").permitAll()
+                                        .requestMatchers(HttpMethod.POST,"/api/v1/rooms/**").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.PUT,"/api/v1/rooms/**").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.DELETE,"/api/v1/rooms/**").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/admin").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.DELETE,"/api/v1/hotels/**").hasRole("ADMIN")
                                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))

@@ -40,10 +40,11 @@ public class HotelServiceImpl implements HotelService {
         Hotel oldHotel = hotelRepository.findById(id).orElseThrow(
                 () -> new HotelNotFoundException(id)
         );
-        oldHotel.setName(hotel.getName());
-        oldHotel.setLocation(hotel.getLocation());
-        oldHotel.setRooms(hotel.getRooms());
-        return hotelRepository.save(oldHotel);
+        if (hotel.getRooms() == null || hotel.getRooms().isEmpty()){
+            hotel.setRooms(oldHotel.getRooms());
+        }
+        hotel.setId(oldHotel.getId());
+        return hotelRepository.save(hotel);
     }
 
     @Override

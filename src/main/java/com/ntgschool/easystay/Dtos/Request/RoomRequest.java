@@ -12,8 +12,14 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class RoomRequest {
+    private String name;
     private Long capacity;
+    private Integer capacityChildren;
+    private String bedType;
+    private Integer sizeM2;
     private Double price;
+    private Boolean refundable;
+    private Boolean breakfastIncluded;
     private List<FacilityRequest> facilities;
     private HotelRequest hotel;
 }

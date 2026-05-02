@@ -1,6 +1,7 @@
 package com.ntgschool.easystay.Dtos.Request;
 
 import com.ntgschool.easystay.Entities.Location;
+import com.ntgschool.easystay.Entities.UserLocation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ public class CreateAccountRequest {
 
     private String password;
 
-    private Location location;
+    private UserLocation location;
 
     private String phoneNumber;
 }

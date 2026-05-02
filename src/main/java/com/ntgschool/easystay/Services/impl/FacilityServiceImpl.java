@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,9 @@ public class FacilityServiceImpl implements FacilityService {
         return facilityRepository.findById(id).orElseThrow(
                 () -> new FacilityNotFoundException(id)
         );
+    }
+    public Optional<Facility> getOptionalFacilityById(Long id) {
+        return facilityRepository.findById(id);
     }
 
     @Override

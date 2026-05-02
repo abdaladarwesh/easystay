@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AuthenticationRequest {
+
     private final String EMAIL_REQUIRED_ERROR_MESSAGE = "Email is required!";
     private final String PASSWORD_REQUIRED_ERROR_MESSAGE = "Password is required!";
 

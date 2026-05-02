@@ -39,7 +39,13 @@ public class RoomServiceImpl implements RoomService {
         List<Facility> oldFacilities = new ArrayList<>();
         room.getFacilities().forEach(
                 (facility) -> {
-                    Facility facilityById = facilityService.getFacilityById(facility.getId());
+                    Facility facilityById;
+                    if (facility.getId() == null){
+                        facilityById = facilityService.createFacility(facility);
+                    } else
+                    {
+                        facilityById = facilityService.getFacilityById(facility.getId());
+                    }
                     oldFacilities.add(facilityById);
                 }
         );
@@ -54,10 +60,8 @@ public class RoomServiceImpl implements RoomService {
         Room oldRoom = roomRepository.findById(id).orElseThrow(
                 () -> new RoomNotFoundException(id)
         );
-        oldRoom.setCapacity(room.getCapacity());
-        oldRoom.setPrice(room.getPrice());
-        oldRoom.setFacilities(room.getFacilities());
-        return roomRepository.save(oldRoom);
+        room.setId(id);
+        return roomRepository.save(room);
     }
 
     @Override

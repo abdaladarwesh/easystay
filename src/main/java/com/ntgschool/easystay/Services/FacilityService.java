@@ -3,6 +3,7 @@ package com.ntgschool.easystay.Services;
 import com.ntgschool.easystay.Entities.Facility;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FacilityService {
     List<Facility> getAllFacilities();
@@ -10,4 +11,5 @@ public interface FacilityService {
     Facility createFacility(Facility facility);
     Facility updateFacility(Long id, Facility facility);
     void deleteFacility(Long id);
+    Optional<Facility> getOptionalFacilityById(Long id) ;
 }

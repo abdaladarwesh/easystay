@@ -13,6 +13,8 @@ import com.ntgschool.easystay.Repos.HotelRepository;
 import com.ntgschool.easystay.Repos.ReservationRepository;
 import com.ntgschool.easystay.Repos.RoomRepository;
 import com.ntgschool.easystay.Repos.UserRepository;
+import com.ntgschool.easystay.Security.SecurityUtils;
+import com.ntgschool.easystay.Security.UserPrincipal;
 import com.ntgschool.easystay.Services.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,13 +31,11 @@ public class ReservationServiceImpl implements ReservationService {
     private final HotelRepository hotelRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final SecurityUtils securityUtils;
 
     @Override
     public Reservation addReservation(ReservationRequest request) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User Doesn't exist with id " + email)
-        );
+        UserPrincipal userPrincipal = securityUtils.getCurrentUser();
         Hotel hotel = hotelRepository.findById(request.getHotelId())
                 .orElseThrow(() -> new HotelNotFoundException(request.getHotelId()));
         Room room = roomRepository.findById(request.getRoomId())
@@ -43,7 +43,7 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = Reservation.builder()
                 .room(room)
                 .hotel(hotel)
-                .user(user)
+                .user(userPrincipal.getUser())
                 .checkIn(request.getCheckIn())
                 .checkOut(request.getCheckOut())
                 .build();
@@ -56,21 +56,15 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationNotFoundException(reservationId));
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User Doesn't exist with id " + email)
-        );
+        User user = securityUtils.getCurrentUser().getUser();
 
-        if (!reservation.getUser().equals(user)) throw new UnAuthorizedAccessToReservationException(reservationId, user.getId());
+        if (!reservation.getUser().getEmail().equals(user.getEmail())) throw new UnAuthorizedAccessToReservationException(reservationId, user.getId());
         reservationRepository.deleteById(reservationId);
     }
 
     @Override
     public List<Reservation> getAllReservations() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User Doesn't exist with id " + email)
-        );
+        User user = securityUtils.getCurrentUser().getUser();
         return reservationRepository.findAllByUser(user);
     }
 }
